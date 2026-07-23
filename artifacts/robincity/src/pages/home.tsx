@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Search, LogOut, LayoutDashboard } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,7 @@ export default function Home() {
   const [cityMode, setCityMode] = useState<'awake' | 'sleeping'>('awake');
   const fullCommand = '> generating your cityhood...';
 
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
 
   useEffect(() => {
     document.title = 'Cityhood - Your GitHub Contributions as a Pixel-Art City';
@@ -50,6 +50,59 @@ export default function Home() {
     <div className={`min-h-[100dvh] w-full relative overflow-hidden bg-background transition-opacity duration-1000 ${cityMode === 'sleeping' ? 'opacity-40' : ''}`}>
       <LofiPlayer />
 
+      {/* ── HEADER: always on top, outside all animation layers ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 pb-2 sm:px-4 sm:pt-4 pointer-events-auto">
+        <div className="flex justify-between items-center gap-2">
+          <Logo />
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="hidden sm:block">
+              <LiveBadge count={1} />
+            </span>
+
+            {authLoading ? (
+              /* Loading skeleton */
+              <div className="h-8 w-20 bg-border animate-pulse" />
+            ) : user ? (
+              /* Logged in: avatar + dashboard + logout */
+              <div className="flex items-center gap-2">
+                <Link href="/dashboard">
+                  <button
+                    className="flex items-center gap-1.5 border border-border bg-card hover:bg-accent transition-colors px-2.5 py-1.5 text-xs font-bold"
+                    data-testid="button-my-dashboard"
+                  >
+                    <img
+                      src={user.avatar_url}
+                      alt={user.username}
+                      className="w-5 h-5 border border-border"
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">DASHBOARD</span>
+                  </button>
+                </Link>
+                <button
+                  onClick={() => logout()}
+                  className="flex items-center gap-1 border border-border bg-card hover:bg-destructive hover:text-destructive-foreground transition-colors px-2.5 py-1.5 text-xs font-bold"
+                  data-testid="button-logout"
+                  title="Logout"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">LOGOUT</span>
+                </button>
+              </div>
+            ) : (
+              /* Not logged in */
+              <Link href="/login">
+                <Button size="sm" data-testid="button-sign-in">
+                  SIGN IN
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+
       {/* Terminal loading screen */}
       <motion.div
         className="absolute inset-0 bg-background z-20 flex items-center justify-center px-4"
@@ -70,53 +123,13 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: showCity ? 1 : 0 }}
         transition={{ duration: 0.5 }}
+        style={{ pointerEvents: showCity ? 'auto' : 'none' }}
       >
         <CitySkyline sleeping={cityMode === 'sleeping'} />
 
-        {/* Top control bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
-          <div className="flex justify-between items-center gap-2">
-            <Logo />
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="hidden sm:block">
-                <LiveBadge count={1} />
-              </span>
-
-              {/* Auth-aware button */}
-              {authLoading ? (
-                <Button size="sm" disabled variant="outline">...</Button>
-              ) : user ? (
-                /* Logged in: show avatar + dashboard link */
-                <Link href="/dashboard">
-                  <button
-                    className="flex items-center gap-2 border border-border bg-card hover:bg-accent transition-colors px-3 py-1.5 text-xs font-bold"
-                    data-testid="button-my-dashboard"
-                  >
-                    <img
-                      src={user.avatar_url}
-                      alt={user.username}
-                      className="w-5 h-5 border border-border"
-                      style={{ imageRendering: 'pixelated' }}
-                    />
-                    <span className="hidden sm:inline">MY DASHBOARD</span>
-                    <span className="sm:hidden">DASHBOARD</span>
-                  </button>
-                </Link>
-              ) : (
-                /* Not logged in: sign in button */
-                <Link href="/login">
-                  <Button size="sm" data-testid="button-sign-in">
-                    SIGN IN
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* Hero content */}
         <div className="relative z-10 flex items-center justify-center min-h-[100dvh] px-4">
-          <div className="w-full max-w-2xl text-center space-y-5 pt-16 pb-28 sm:pt-20 sm:pb-24">
+          <div className="w-full max-w-2xl text-center space-y-5 pt-20 pb-28 sm:pt-24 sm:pb-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -157,20 +170,20 @@ export default function Home() {
               </Button>
             </motion.form>
 
-            {/* CTA: if logged in show "my building" shortcut */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.75, duration: 0.5 }}
-            >
-              {!authLoading && user && (
+            {/* Logged-in shortcut */}
+            {!authLoading && user && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.75 }}
+              >
                 <Link href={`/user/${user.username}`}>
                   <button className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
                     OR VIEW YOUR OWN BUILDING →
                   </button>
                 </Link>
-              )}
-            </motion.div>
+              </motion.div>
+            )}
 
             <motion.div
               initial={{ opacity: 0 }}
@@ -213,12 +226,13 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* Footer – visible after scrolling past the hero */}
+      {/* Footer */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: showCity ? 1 : 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
         className="relative z-10"
+        style={{ pointerEvents: showCity ? 'auto' : 'none' }}
       >
         <Footer />
       </motion.div>
