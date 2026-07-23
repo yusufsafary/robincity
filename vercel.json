@@ -1,0 +1,10 @@
+{
+  "buildCommand": "pnpm --filter @workspace/robincity run build",
+  "outputDirectory": "artifacts/robincity/dist/public",
+  "installCommand": "pnpm install",
+  "framework": null,
+  "env": {
+    "BASE_PATH": "/",
+    "NODE_ENV": "production"
+  }
+}
