@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm --filter @workspace/robincity run build",
   "outputDirectory": "artifacts/robincity/dist/public",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": null,
   "env": {
     "BASE_PATH": "/",
