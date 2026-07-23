@@ -1,9 +1,26 @@
 import { Github } from 'lucide-react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
+import { useEffect } from 'react';
 
 export default function Login() {
+  const { user, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // If already logged in, redirect to home
+  useEffect(() => {
+    if (!loading && user) {
+      setLocation(`/user/${user.username}`);
+    }
+  }, [user, loading, setLocation]);
+
+  const handleGitHubLogin = () => {
+    const redirect = new URLSearchParams(window.location.search).get('redirect') || '/';
+    window.location.href = `/api/auth/github?redirect=${encodeURIComponent(redirect)}`;
+  };
+
   return (
     <div className="min-h-[100dvh] w-full flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md space-y-8">
@@ -19,24 +36,41 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="bg-secondary border border-border px-4 py-3 text-xs text-center text-muted-foreground">
-            GITHUB AUTH COMING SOON. SEARCH YOUR USERNAME TO PREVIEW YOUR BUILDING NOW.
+          <div className="bg-secondary border border-border px-4 py-3 text-xs text-center text-muted-foreground space-y-1">
+            <div>WE ONLY ACCESS YOUR PUBLIC GITHUB PROFILE DATA.</div>
+            <div>NO WRITE PERMISSIONS REQUESTED.</div>
+          </div>
+
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={handleGitHubLogin}
+            disabled={loading}
+            data-testid="button-signin-github"
+          >
+            <Github className="w-5 h-5 mr-2" />
+            {loading ? 'CHECKING...' : 'SIGN IN WITH GITHUB'}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-card px-3 text-muted-foreground">OR</span>
+            </div>
           </div>
 
           <Link href="/">
             <Button
               size="lg"
+              variant="outline"
               className="w-full"
               data-testid="button-search-instead"
             >
-              <Github className="w-5 h-5 mr-2" />
-              SEARCH YOUR USERNAME
+              SEARCH USERNAME WITHOUT SIGNING IN
             </Button>
           </Link>
-
-          <div className="text-center text-xs text-muted-foreground">
-            WE ONLY ACCESS YOUR PUBLIC GITHUB PROFILE DATA.
-          </div>
         </div>
 
         <div className="text-center space-y-4">

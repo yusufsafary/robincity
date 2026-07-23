@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'wouter';
 import { motion } from 'framer-motion';
-import { ExternalLink, GitFork, Star, Users, Code2, Calendar, ArrowLeft } from 'lucide-react';
+import {
+  ExternalLink, GitFork, Star, Users, Code2, Calendar,
+  ArrowLeft, CheckCircle, Lock, Palette, LogIn,
+} from 'lucide-react';
 import { BackLink } from '@/components/back-link';
 import { Footer } from '@/components/footer';
 import { LofiPlayer } from '@/components/lofi-player';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 interface GitHubUser {
   login: string;
@@ -31,6 +36,17 @@ interface GitHubRepo {
   forks_count: number;
   language: string | null;
   html_url: string;
+}
+
+interface BuildingData {
+  claimed: boolean;
+  github_username?: string;
+  owner_username?: string;
+  owner_avatar?: string;
+  custom_color?: string | null;
+  rooftop_item?: string | null;
+  building_item?: string | null;
+  claimed_at?: string;
 }
 
 function buildingHeight(repos: number, followers: number): number {
@@ -69,10 +85,16 @@ function tierFromFloors(h: number): { label: string; color: string } {
 
 export default function UserPage() {
   const { username } = useParams<{ username: string }>();
+  const { user: authUser, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [buildingData, setBuildingData] = useState<BuildingData | null>(null);
+  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
     if (username) {
@@ -80,43 +102,99 @@ export default function UserPage() {
     }
   }, [username]);
 
+  // Fetch GitHub user + repos + building claim data in parallel
   useEffect(() => {
     if (!username) return;
     setLoading(true);
     setError(null);
     setUser(null);
     setRepos([]);
+    setBuildingData(null);
 
-    const fetchUser = fetch(`https://api.github.com/users/${encodeURIComponent(username)}`)
+    const fetchGhUser = fetch(`https://api.github.com/users/${encodeURIComponent(username)}`)
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 404 ? 'USER NOT FOUND' : 'GITHUB API ERROR');
-        return r.json();
+        return r.json() as Promise<GitHubUser>;
       });
 
     const fetchRepos = fetch(
-      `https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=stars&per_page=6`
+      `https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=stars&per_page=6`,
     )
-      .then((r) => (r.ok ? r.json() : []))
-      .catch(() => []);
+      .then((r) => (r.ok ? (r.json() as Promise<GitHubRepo[]>) : []))
+      .catch(() => [] as GitHubRepo[]);
 
-    Promise.all([fetchUser, fetchRepos])
-      .then(([u, r]) => {
+    const fetchBuilding = fetch(`/api/buildings/${encodeURIComponent(username)}`, {
+      credentials: 'include',
+    })
+      .then((r) => (r.ok ? (r.json() as Promise<BuildingData>) : { claimed: false }))
+      .catch(() => ({ claimed: false } as BuildingData));
+
+    Promise.all([fetchGhUser, fetchRepos, fetchBuilding])
+      .then(([u, r, b]) => {
         setUser(u);
         setRepos(r);
+        setBuildingData(b);
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, [username]);
 
+  const refetchBuilding = useCallback(() => {
+    if (!username) return;
+    fetch(`/api/buildings/${encodeURIComponent(username)}`, { credentials: 'include' })
+      .then((r) => (r.ok ? (r.json() as Promise<BuildingData>) : { claimed: false }))
+      .then(setBuildingData)
+      .catch(() => {});
+  }, [username]);
+
+  const handleClaim = async () => {
+    if (!authUser || !username) return;
+    setClaiming(true);
+    try {
+      const resp = await fetch('/api/buildings/claim', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      const data = (await resp.json()) as { ok?: boolean; already_claimed?: boolean; error?: string };
+      if (data.ok) {
+        toast({
+          title: data.already_claimed ? 'ALREADY YOURS' : 'BUILDING CLAIMED! 🏙️',
+          description: data.already_claimed
+            ? 'This building is already claimed by you.'
+            : `@${username}'s building is now yours. Customize it in the shop!`,
+        });
+        refetchBuilding();
+      } else {
+        toast({ title: 'ERROR', description: data.error ?? 'Failed to claim', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'ERROR', description: 'Network error', variant: 'destructive' });
+    } finally {
+      setClaiming(false);
+    }
+  };
+
   const bHeight = user ? buildingHeight(user.public_repos, user.followers) : 100;
   const topLang = repos.find((r) => r.language)?.language ?? null;
-  const color = languageColor(topLang);
+  // Use custom color from building data if available, otherwise use language color
+  const buildingColor = buildingData?.custom_color ?? languageColor(topLang);
   const joinYear = user ? new Date(user.created_at).getFullYear() : null;
   const tier = tierFromFloors(bHeight);
 
-  // Generate deterministic window rows for the building preview
   const floors = Math.round(bHeight / 20);
   const windowRows = Array.from({ length: Math.min(floors, 8) }, (_, i) => i);
+
+  // Determine claim state
+  const isOwnBuilding =
+    !authLoading &&
+    authUser != null &&
+    username != null &&
+    authUser.username.toLowerCase() === username.toLowerCase();
+
+  const isClaimedByMe = buildingData?.claimed && isOwnBuilding;
+  const isClaimedByOther = buildingData?.claimed && !isOwnBuilding;
 
   return (
     <div className="min-h-[100dvh] bg-background">
@@ -172,6 +250,18 @@ export default function UserPage() {
                   >
                     {tier.label}
                   </span>
+                  {isClaimedByMe && (
+                    <span className="text-xs px-2 py-0.5 font-bold shrink-0 text-primary border border-primary/50 bg-primary/10 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      YOUR BUILDING
+                    </span>
+                  )}
+                  {isClaimedByOther && (
+                    <span className="text-xs px-2 py-0.5 font-bold shrink-0 text-muted-foreground border border-border flex items-center gap-1">
+                      <Lock className="w-3 h-3" />
+                      CLAIMED
+                    </span>
+                  )}
                 </div>
                 <div className="text-muted-foreground text-sm sm:text-base">@{user.login}</div>
                 {user.bio && (
@@ -223,46 +313,130 @@ export default function UserPage() {
 
               {/* Building preview */}
               <div className="bg-card border border-border p-4 flex flex-col items-center justify-end min-h-[180px]">
-                <div className="text-xs text-muted-foreground mb-3 self-start">BUILDING PREVIEW</div>
+                <div className="text-xs text-muted-foreground mb-3 self-start flex items-center gap-2">
+                  BUILDING PREVIEW
+                  {buildingData?.rooftop_item && (
+                    <span className="text-primary">· {buildingData.rooftop_item}</span>
+                  )}
+                </div>
                 <svg viewBox="0 0 100 160" className="w-24 sm:w-28 h-auto">
                   {/* Building body */}
                   <rect
                     x="20" y={160 - bHeight * 0.6}
                     width="60" height={bHeight * 0.6}
-                    fill="#0a180a" stroke={color} strokeWidth="1.5"
+                    fill="#0a180a" stroke={buildingColor} strokeWidth="1.5"
                   />
                   {/* Roof */}
                   <polygon
                     points={`20,${160 - bHeight * 0.6} 50,${160 - bHeight * 0.6 - 12} 80,${160 - bHeight * 0.6}`}
-                    fill="#0d1f0d" stroke={color} strokeWidth="1"
+                    fill="#0d1f0d" stroke={buildingColor} strokeWidth="1"
                   />
                   {/* Window rows */}
                   {windowRows.map((row) => (
                     <g key={row}>
                       <rect x="28" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
-                        fill={color} opacity={row % 3 === 0 ? 0.9 : 0.4}/>
+                        fill={buildingColor} opacity={row % 3 === 0 ? 0.9 : 0.4}/>
                       <rect x="45" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
-                        fill={color} opacity={row % 2 === 0 ? 0.7 : 0.2}/>
+                        fill={buildingColor} opacity={row % 2 === 0 ? 0.7 : 0.2}/>
                       <rect x="62" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
-                        fill={color} opacity={row % 3 === 1 ? 0.8 : 0.3}/>
+                        fill={buildingColor} opacity={row % 3 === 1 ? 0.8 : 0.3}/>
                     </g>
                   ))}
                   {/* Antenna */}
-                  <rect x="49" y={160 - bHeight * 0.6 - 24} width="2" height="14" fill={color}/>
-                  <rect x="43" y={160 - bHeight * 0.6 - 20} width="14" height="1.5" fill={color}/>
+                  <rect x="49" y={160 - bHeight * 0.6 - 24} width="2" height="14" fill={buildingColor}/>
+                  <rect x="43" y={160 - bHeight * 0.6 - 20} width="14" height="1.5" fill={buildingColor}/>
                 </svg>
                 <div className="mt-3 text-center">
                   <div className="text-xs text-muted-foreground">
                     {Math.round(bHeight)} FLOORS
                   </div>
                   {topLang && (
-                    <div className="text-xs mt-1" style={{ color }}>
+                    <div className="text-xs mt-1" style={{ color: buildingColor }}>
                       {topLang}
                     </div>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* Claim / Status banner */}
+            {!authLoading && (
+              <div className="border border-border bg-card p-4 space-y-3">
+                {isClaimedByMe ? (
+                  /* Owner view */
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+                    <div>
+                      <div className="font-bold flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary" />
+                        THIS IS YOUR BUILDING
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        CLAIMED ON {new Date(buildingData!.claimed_at!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      </div>
+                    </div>
+                    <Link href={`/shop?username=${username}`}>
+                      <Button size="sm" variant="outline" data-testid="button-customize-building">
+                        <Palette className="w-4 h-4 mr-2" />
+                        CUSTOMIZE BUILDING
+                      </Button>
+                    </Link>
+                  </div>
+                ) : isClaimedByOther ? (
+                  /* Claimed by someone else */
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={buildingData!.owner_avatar}
+                      alt="owner"
+                      className="w-8 h-8 border border-border"
+                    />
+                    <div>
+                      <div className="text-sm font-bold">CLAIMED BY @{buildingData!.owner_username}</div>
+                      <div className="text-xs text-muted-foreground">THIS BUILDING IS OWNED BY ANOTHER USER</div>
+                    </div>
+                  </div>
+                ) : isOwnBuilding ? (
+                  /* Own building, not yet claimed */
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+                    <div>
+                      <div className="font-bold">THIS IS YOUR BUILDING</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        CLAIM IT TO CUSTOMIZE WITH SHOP ITEMS AND APPEAR IN THE LEADERBOARD
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={handleClaim}
+                      disabled={claiming}
+                      data-testid="button-claim-building"
+                    >
+                      {claiming ? 'CLAIMING...' : 'CLAIM THIS BUILDING'}
+                    </Button>
+                  </div>
+                ) : authUser == null ? (
+                  /* Not logged in */
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+                    <div>
+                      <div className="font-bold">IS THIS YOUR BUILDING?</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        SIGN IN WITH GITHUB TO CLAIM AND CUSTOMIZE IT
+                      </div>
+                    </div>
+                    <Link href={`/login?redirect=${encodeURIComponent(`/user/${username}`)}`}>
+                      <Button size="sm" data-testid="button-login-to-claim">
+                        <LogIn className="w-4 h-4 mr-2" />
+                        SIGN IN TO CLAIM
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  /* Logged in but viewing someone else's unclaimed building */
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Lock className="w-4 h-4" />
+                    THIS BUILDING IS NOT YET CLAIMED. IT CAN BE CLAIMED BY @{username?.toUpperCase()}.
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Top repos */}
             {repos.length > 0 && (
@@ -316,11 +490,10 @@ export default function UserPage() {
             )}
 
             <div className="pt-4 flex flex-col sm:flex-row gap-3 items-center justify-center">
-              <Link href="/login">
-                <Button size="lg" data-testid="button-claim-building">CLAIM THIS BUILDING</Button>
-              </Link>
               <Link href="/explore">
-                <Button size="lg" variant="outline" data-testid="button-explore-more">EXPLORE MORE BUILDINGS</Button>
+                <Button size="lg" variant="outline" data-testid="button-explore-more">
+                  EXPLORE MORE BUILDINGS
+                </Button>
               </Link>
             </div>
           </motion.div>

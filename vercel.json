@@ -8,6 +8,9 @@
     "NODE_ENV": "production"
   },
   "rewrites": [
-    { "source": "/((?!_next|favicon|sitemap|robots|.well-known|.*\\..*).*)", "destination": "/index.html" }
+    {
+      "source": "/((?!api|_next|favicon|sitemap|robots|.well-known|.*\\..*).*)",
+      "destination": "/index.html"
+    }
   ]
 }
