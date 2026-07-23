@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { motion } from 'framer-motion';
-import { ExternalLink, GitFork, Star, Users, Code2, Calendar, Building2, ArrowLeft } from 'lucide-react';
+import { ExternalLink, GitFork, Star, Users, Code2, Calendar, ArrowLeft } from 'lucide-react';
 import { BackLink } from '@/components/back-link';
 import { Footer } from '@/components/footer';
 import { LofiPlayer } from '@/components/lofi-player';
@@ -46,11 +46,25 @@ function languageColor(lang: string | null): string {
     Go: 'hsl(190 80% 55%)',
     Java: 'hsl(0 70% 55%)',
     'C++': 'hsl(240 70% 60%)',
+    C: 'hsl(240 60% 65%)',
     Ruby: 'hsl(0 80% 50%)',
     CSS: 'hsl(280 70% 60%)',
     HTML: 'hsl(20 90% 55%)',
+    Swift: 'hsl(25 90% 60%)',
+    Kotlin: 'hsl(270 70% 65%)',
+    PHP: 'hsl(230 60% 65%)',
+    Shell: 'hsl(150 60% 50%)',
   };
   return map[lang ?? ''] ?? 'hsl(75 100% 60%)';
+}
+
+function tierFromFloors(h: number): { label: string; color: string } {
+  if (h >= 200) return { label: 'LEGEND',    color: 'hsl(0 100% 60%)' };
+  if (h >= 170) return { label: 'ARCHITECT', color: 'hsl(30 100% 55%)' };
+  if (h >= 130) return { label: 'SENIOR',    color: 'hsl(55 100% 55%)' };
+  if (h >= 100) return { label: 'MID',       color: 'hsl(75 80% 50%)' };
+  if (h >= 70)  return { label: 'JUNIOR',    color: 'hsl(120 50% 50%)' };
+  return           { label: 'NEWBIE',    color: 'hsl(120 30% 40%)' };
 }
 
 export default function UserPage() {
@@ -59,6 +73,12 @@ export default function UserPage() {
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (username) {
+      document.title = `@${username} | Cityhood`;
+    }
+  }, [username]);
 
   useEffect(() => {
     if (!username) return;
@@ -92,6 +112,11 @@ export default function UserPage() {
   const topLang = repos.find((r) => r.language)?.language ?? null;
   const color = languageColor(topLang);
   const joinYear = user ? new Date(user.created_at).getFullYear() : null;
+  const tier = tierFromFloors(bHeight);
+
+  // Generate deterministic window rows for the building preview
+  const floors = Math.round(bHeight / 20);
+  const windowRows = Array.from({ length: Math.min(floors, 8) }, (_, i) => i);
 
   return (
     <div className="min-h-[100dvh] bg-background">
@@ -102,14 +127,16 @@ export default function UserPage() {
 
         {loading && (
           <div className="mt-16 text-center">
-            <div className="text-2xl font-mono animate-pulse">LOADING {username?.toUpperCase()}...</div>
+            <div className="text-xl sm:text-2xl font-mono animate-pulse">
+              LOADING {username?.toUpperCase()}...
+            </div>
           </div>
         )}
 
         {error && (
           <div className="mt-16 text-center space-y-6">
-            <div className="text-4xl font-bold text-destructive">{error}</div>
-            <p className="text-muted-foreground">
+            <div className="text-3xl sm:text-4xl font-bold text-destructive">{error}</div>
+            <p className="text-muted-foreground text-sm sm:text-base">
               @{username} does not exist on GitHub or the API rate limit was hit.
             </p>
             <Link href="/">
@@ -123,110 +150,127 @@ export default function UserPage() {
 
         {user && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="mt-8 space-y-8"
           >
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
+            {/* Profile header */}
+            <div className="flex flex-col sm:flex-row gap-5 items-start">
               <img
                 src={user.avatar_url}
-                alt={user.login}
-                className="w-20 h-20 sm:w-24 sm:h-24 border-2 border-primary pixel-art"
-                style={{ imageRendering: 'pixelated' }}
+                alt={`${user.login} avatar`}
+                className="w-20 h-20 sm:w-24 sm:h-24 border-2 border-primary shrink-0"
+                loading="lazy"
               />
-              <div className="flex-1 min-w-0">
-                <h1 className="text-3xl sm:text-4xl font-bold truncate">{user.name ?? user.login}</h1>
-                <div className="text-primary text-lg mt-1">@{user.login}</div>
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-2xl sm:text-4xl font-bold truncate">{user.name ?? user.login}</h1>
+                  <span
+                    className="text-xs px-2 py-0.5 font-bold shrink-0"
+                    style={{ color: tier.color, border: `1px solid ${tier.color}50`, background: `${tier.color}15` }}
+                  >
+                    {tier.label}
+                  </span>
+                </div>
+                <div className="text-muted-foreground text-sm sm:text-base">@{user.login}</div>
                 {user.bio && (
-                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{user.bio}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{user.bio}</p>
                 )}
-                <div className="flex flex-wrap gap-3 mt-3 text-xs text-muted-foreground">
-                  {user.location && <span>{user.location.toUpperCase()}</span>}
+                <div className="flex flex-wrap gap-4 text-xs text-muted-foreground pt-1">
                   {joinYear && (
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       JOINED {joinYear}
                     </span>
                   )}
-                </div>
-              </div>
-              <a
-                href={user.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0"
-              >
-                <Button variant="outline" size="sm">
-                  <ExternalLink className="w-3 h-3 mr-2" />
-                  GITHUB
-                </Button>
-              </a>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: 'REPOS', value: user.public_repos, icon: Code2 },
-                { label: 'FOLLOWERS', value: user.followers, icon: Users },
-                { label: 'FOLLOWING', value: user.following, icon: Users },
-              ].map(({ label, value, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border p-4 text-center">
-                  <Icon className="w-4 h-4 mx-auto mb-2 text-muted-foreground" />
-                  <div className="text-2xl sm:text-3xl font-bold">{value.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{label}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Building preview */}
-            <div className="bg-card border border-border p-6">
-              <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-                <Building2 className="w-4 h-4" />
-                <span>YOUR BUILDING IN CITYHOOD</span>
-                {topLang && <span className="text-xs border border-border px-2 py-0.5">{topLang.toUpperCase()}</span>}
-              </div>
-              <div className="flex items-end justify-center gap-1" style={{ height: 160 }}>
-                {/* Main building */}
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: bHeight }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className="relative w-24 border-2 flex flex-col items-center justify-start pt-2 gap-2"
-                  style={{ borderColor: color, backgroundColor: `${color}15` }}
-                >
-                  <div className="text-[8px] font-mono opacity-60 px-1 text-center break-all"
-                    style={{ color }}
+                  {user.location && (
+                    <span className="truncate max-w-[160px]">{user.location.toUpperCase()}</span>
+                  )}
+                  <a
+                    href={user.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 hover:text-primary transition-colors"
+                    data-testid="link-github-profile"
                   >
-                    {user.login.toUpperCase()}
+                    GITHUB
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats + Building */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'REPOS', value: user.public_repos, icon: Code2 },
+                  { label: 'FOLLOWERS', value: user.followers, icon: Users },
+                  { label: 'FOLLOWING', value: user.following, icon: Users },
+                  { label: 'GISTS', value: user.public_gists, icon: Code2 },
+                ].map(({ label, value, icon: Icon }) => (
+                  <div key={label} className="bg-card border border-border p-3 sm:p-4">
+                    <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                      <Icon className="w-3 h-3" />
+                      {label}
+                    </div>
+                    <div className="text-xl sm:text-2xl font-bold">{value.toLocaleString()}</div>
                   </div>
-                  <div
-                    className="w-3 h-3 rounded-full animate-pulse"
-                    style={{ backgroundColor: color }}
-                  />
-                </motion.div>
-                {/* Neighbor buildings */}
-                {[0.55, 0.4, 0.7, 0.35].map((factor, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ height: 0 }}
-                    animate={{ height: bHeight * factor }}
-                    transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
-                    className="w-10 border opacity-30"
-                    style={{ borderColor: 'hsl(75 100% 60%)', backgroundColor: 'hsl(120 30% 10%)' }}
-                  />
                 ))}
               </div>
-              <div className="mt-4 text-xs text-muted-foreground text-center">
-                BUILDING HEIGHT BASED ON PUBLIC REPOS AND FOLLOWERS
+
+              {/* Building preview */}
+              <div className="bg-card border border-border p-4 flex flex-col items-center justify-end min-h-[180px]">
+                <div className="text-xs text-muted-foreground mb-3 self-start">BUILDING PREVIEW</div>
+                <svg viewBox="0 0 100 160" className="w-24 sm:w-28 h-auto">
+                  {/* Building body */}
+                  <rect
+                    x="20" y={160 - bHeight * 0.6}
+                    width="60" height={bHeight * 0.6}
+                    fill="#0a180a" stroke={color} strokeWidth="1.5"
+                  />
+                  {/* Roof */}
+                  <polygon
+                    points={`20,${160 - bHeight * 0.6} 50,${160 - bHeight * 0.6 - 12} 80,${160 - bHeight * 0.6}`}
+                    fill="#0d1f0d" stroke={color} strokeWidth="1"
+                  />
+                  {/* Window rows */}
+                  {windowRows.map((row) => (
+                    <g key={row}>
+                      <rect x="28" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
+                        fill={color} opacity={row % 3 === 0 ? 0.9 : 0.4}/>
+                      <rect x="45" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
+                        fill={color} opacity={row % 2 === 0 ? 0.7 : 0.2}/>
+                      <rect x="62" y={160 - bHeight * 0.6 + 8 + row * 16} width="10" height="10"
+                        fill={color} opacity={row % 3 === 1 ? 0.8 : 0.3}/>
+                    </g>
+                  ))}
+                  {/* Antenna */}
+                  <rect x="49" y={160 - bHeight * 0.6 - 24} width="2" height="14" fill={color}/>
+                  <rect x="43" y={160 - bHeight * 0.6 - 20} width="14" height="1.5" fill={color}/>
+                </svg>
+                <div className="mt-3 text-center">
+                  <div className="text-xs text-muted-foreground">
+                    {Math.round(bHeight)} FLOORS
+                  </div>
+                  {topLang && (
+                    <div className="text-xs mt-1" style={{ color }}>
+                      {topLang}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Top repos */}
             {repos.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="text-xl font-bold">TOP REPOSITORIES</h2>
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2">
+                  <GitFork className="w-4 h-4 text-primary" />
+                  TOP REPOSITORIES
+                </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {repos.map((repo) => (
                     <a
@@ -235,10 +279,11 @@ export default function UserPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-card border border-border p-4 hover:border-primary transition-colors block"
+                      data-testid={`link-repo-${repo.name}`}
                     >
                       <div className="font-bold text-sm truncate">{repo.name}</div>
                       {repo.description && (
-                        <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        <div className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
                           {repo.description}
                         </div>
                       )}
@@ -248,17 +293,20 @@ export default function UserPage() {
                             className="flex items-center gap-1"
                             style={{ color: languageColor(repo.language) }}
                           >
-                            <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: languageColor(repo.language) }} />
+                            <span
+                              className="w-2 h-2 rounded-full inline-block"
+                              style={{ backgroundColor: languageColor(repo.language) }}
+                            />
                             {repo.language}
                           </span>
                         )}
                         <span className="flex items-center gap-1">
                           <Star className="w-3 h-3" />
-                          {repo.stargazers_count}
+                          {repo.stargazers_count.toLocaleString()}
                         </span>
                         <span className="flex items-center gap-1">
                           <GitFork className="w-3 h-3" />
-                          {repo.forks_count}
+                          {repo.forks_count.toLocaleString()}
                         </span>
                       </div>
                     </a>
@@ -267,9 +315,12 @@ export default function UserPage() {
               </div>
             )}
 
-            <div className="pt-4 text-center">
+            <div className="pt-4 flex flex-col sm:flex-row gap-3 items-center justify-center">
               <Link href="/login">
-                <Button size="lg">CLAIM THIS BUILDING</Button>
+                <Button size="lg" data-testid="button-claim-building">CLAIM THIS BUILDING</Button>
+              </Link>
+              <Link href="/explore">
+                <Button size="lg" variant="outline" data-testid="button-explore-more">EXPLORE MORE BUILDINGS</Button>
               </Link>
             </div>
           </motion.div>

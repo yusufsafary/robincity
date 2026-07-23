@@ -14,11 +14,17 @@ export function Footer() {
             <Link href="/how-to" className="hover:text-foreground transition-colors" data-testid="link-footer-howto">
               HOW TO PLAY
             </Link>
+            <Link href="/explore" className="hover:text-foreground transition-colors" data-testid="link-footer-explore">
+              EXPLORE
+            </Link>
             <Link href="/leaderboard" className="hover:text-foreground transition-colors" data-testid="link-footer-leaderboard">
               LEADERBOARD
             </Link>
             <Link href="/shop" className="hover:text-foreground transition-colors" data-testid="link-footer-shop">
               SHOP
+            </Link>
+            <Link href="/changelog" className="hover:text-foreground transition-colors" data-testid="link-footer-changelog">
+              CHANGELOG
             </Link>
           </div>
 

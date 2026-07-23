@@ -12,6 +12,8 @@ import Privacy from '@/pages/privacy';
 import Terms from '@/pages/terms';
 import Login from '@/pages/login';
 import UserPage from '@/pages/user';
+import Explore from '@/pages/explore';
+import Changelog from '@/pages/changelog';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
@@ -22,8 +24,10 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
       <Route path="/leaderboard" component={Leaderboard} />
+      <Route path="/explore" component={Explore} />
       <Route path="/about" component={About} />
       <Route path="/how-to" component={HowTo} />
+      <Route path="/changelog" component={Changelog} />
       <Route path="/cookies" component={Cookies} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />

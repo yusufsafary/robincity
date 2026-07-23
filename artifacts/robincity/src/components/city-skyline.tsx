@@ -1,22 +1,25 @@
 import { motion } from 'framer-motion';
 
-export function CitySkyline() {
-  // Generate random buildings with flicker windows
-  const buildings = Array.from({ length: 20 }, (_, i) => ({
+interface CitySkylineProps {
+  sleeping?: boolean;
+}
+
+export function CitySkyline({ sleeping = false }: CitySkylineProps) {
+  const buildings = Array.from({ length: 22 }, (_, i) => ({
     id: i,
-    height: Math.random() * 200 + 100,
-    width: Math.random() * 60 + 40,
-    x: i * 60,
-    windows: Array.from({ length: Math.floor(Math.random() * 6) + 3 }, (_, j) => ({
+    height: 80 + (((i * 137 + 31) % 100) / 100) * 200,
+    width: 40 + (((i * 97 + 17) % 100) / 100) * 60,
+    x: i * 58,
+    windows: Array.from({ length: Math.floor(((i * 53 + 7) % 6) + 3) }, (_, j) => ({
       id: j,
-      delay: Math.random() * 3,
+      delay: ((i * 0.3 + j * 0.7) % 3),
     })),
   }));
 
   return (
     <div className="absolute inset-0 overflow-hidden opacity-20">
       <svg
-        viewBox="0 0 1200 400"
+        viewBox="0 0 1300 400"
         className="w-full h-full"
         preserveAspectRatio="xMidYMax slice"
       >
@@ -25,14 +28,12 @@ export function CitySkyline() {
             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsl(75 100% 60%)" strokeWidth="0.5" opacity="0.1" />
           </pattern>
         </defs>
-        
+
         {/* Grid background */}
-        <rect width="1200" height="400" fill="url(#grid)" />
-        
-        {/* Isometric buildings */}
+        <rect width="1300" height="400" fill="url(#grid)" />
+
         {buildings.map((building) => (
           <g key={building.id}>
-            {/* Building front face */}
             <motion.polygon
               points={`
                 ${building.x},${400 - building.height}
@@ -45,10 +46,9 @@ export function CitySkyline() {
               strokeWidth="1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: building.id * 0.05, duration: 0.5 }}
+              transition={{ delay: building.id * 0.04, duration: 0.5 }}
             />
-            
-            {/* Building top (isometric) */}
+
             <motion.polygon
               points={`
                 ${building.x},${400 - building.height}
@@ -60,28 +60,31 @@ export function CitySkyline() {
               strokeWidth="1"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: building.id * 0.05 + 0.2, duration: 0.5 }}
+              transition={{ delay: building.id * 0.04 + 0.2, duration: 0.5 }}
             />
-            
-            {/* Windows with flicker animation */}
-            {building.windows.map((window, idx) => (
+
+            {building.windows.map((win, idx) => (
               <motion.rect
-                key={window.id}
+                key={win.id}
                 x={building.x + 10 + (idx % 3) * 15}
                 y={400 - building.height + 20 + Math.floor(idx / 3) * 25}
                 width="8"
                 height="12"
                 fill="hsl(75 100% 60%)"
                 initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: [0.3, 1, 0.3],
-                }}
-                transition={{
-                  delay: window.delay,
-                  duration: 2 + Math.random() * 2,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
+                animate={sleeping
+                  ? { opacity: 0.05 }
+                  : { opacity: [0.3, 1, 0.3] }
+                }
+                transition={sleeping
+                  ? { duration: 0.5 }
+                  : {
+                      delay: win.delay,
+                      duration: 2 + (idx % 3),
+                      repeat: Infinity,
+                      repeatType: 'reverse',
+                    }
+                }
               />
             ))}
           </g>

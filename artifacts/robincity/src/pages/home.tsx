@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
@@ -14,9 +14,14 @@ export default function Home() {
   const [showCity, setShowCity] = useState(false);
   const [username, setUsername] = useState('');
   const [terminalText, setTerminalText] = useState('');
+  const [cityMode, setCityMode] = useState<'awake' | 'sleeping'>('awake');
   const fullCommand = '> generating your cityhood...';
 
-  useState(() => {
+  useEffect(() => {
+    document.title = 'Cityhood - Your GitHub Contributions as a Pixel-Art City';
+  }, []);
+
+  useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
       if (index <= fullCommand.length) {
@@ -28,7 +33,7 @@ export default function Home() {
       }
     }, 80);
     return () => clearInterval(interval);
-  });
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +43,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full relative overflow-hidden bg-background">
+    <div className={`min-h-[100dvh] w-full relative overflow-hidden bg-background transition-opacity duration-1000 ${cityMode === 'sleeping' ? 'opacity-40' : ''}`}>
       <LofiPlayer />
 
       {/* Terminal loading screen */}
@@ -62,7 +67,7 @@ export default function Home() {
         animate={{ opacity: showCity ? 1 : 0 }}
         transition={{ duration: 0.5 }}
       >
-        <CitySkyline />
+        <CitySkyline sleeping={cityMode === 'sleeping'} />
 
         {/* Top control bar */}
         <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
@@ -83,7 +88,7 @@ export default function Home() {
 
         {/* Hero content */}
         <div className="relative z-10 flex items-center justify-center min-h-[100dvh] px-4">
-          <div className="w-full max-w-2xl text-center space-y-5 pt-16 pb-20 sm:pt-20 sm:pb-24">
+          <div className="w-full max-w-2xl text-center space-y-5 pt-16 pb-28 sm:pt-20 sm:pb-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -110,12 +115,16 @@ export default function Home() {
                   placeholder="ENTER GITHUB USERNAME..."
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-input border-border text-foreground placeholder:text-muted-foreground pl-10"
+                  className="w-full bg-input border-border text-foreground placeholder:text-muted-foreground pl-10 h-12 text-base"
                   data-testid="input-username-search"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck="false"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               </div>
-              <Button type="submit" size="lg" className="w-full sm:w-auto" data-testid="button-search-submit">
+              <Button type="submit" size="lg" className="w-full sm:w-auto h-12" data-testid="button-search-submit">
                 SEARCH
               </Button>
             </motion.form>
@@ -126,15 +135,19 @@ export default function Home() {
               transition={{ delay: 0.9, duration: 0.8 }}
               className="flex flex-wrap justify-center gap-3 text-sm"
             >
-              <Link href="/how-to" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-how-to-play">
+              <Link href="/how-to" className="text-muted-foreground hover:text-foreground transition-colors py-1" data-testid="link-how-to-play">
                 HOW TO PLAY
               </Link>
               <span className="text-muted-foreground">|</span>
-              <Link href="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-leaderboard">
+              <Link href="/explore" className="text-muted-foreground hover:text-foreground transition-colors py-1" data-testid="link-explore">
+                EXPLORE
+              </Link>
+              <span className="text-muted-foreground">|</span>
+              <Link href="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors py-1" data-testid="link-leaderboard">
                 LEADERBOARD
               </Link>
               <span className="text-muted-foreground">|</span>
-              <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-shop">
+              <Link href="/shop" className="text-muted-foreground hover:text-foreground transition-colors py-1" data-testid="link-shop">
                 SHOP
               </Link>
             </motion.div>
@@ -146,10 +159,11 @@ export default function Home() {
               className="flex justify-center"
             >
               <button
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-muted px-4 py-2"
+                onClick={() => setCityMode(m => m === 'awake' ? 'sleeping' : 'awake')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-muted px-4 py-2 min-h-[44px]"
                 data-testid="button-city-mode-toggle"
               >
-                CITY SLEEPING
+                {cityMode === 'awake' ? 'CITY AWAKE' : 'CITY SLEEPING'}
               </button>
             </motion.div>
           </div>

@@ -1,0 +1,21 @@
+{
+  "name": "Cityhood",
+  "short_name": "Cityhood",
+  "description": "Your GitHub contributions as a pixel-art building in the city.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080d08",
+  "theme_color": "#ccff00",
+  "icons": [
+    {
+      "src": "/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
