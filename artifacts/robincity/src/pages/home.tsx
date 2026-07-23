@@ -9,6 +9,7 @@ import { Logo } from '@/components/logo';
 import { LiveBadge } from '@/components/live-badge';
 import { LofiPlayer } from '@/components/lofi-player';
 import { Footer } from '@/components/footer';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -17,6 +18,8 @@ export default function Home() {
   const [terminalText, setTerminalText] = useState('');
   const [cityMode, setCityMode] = useState<'awake' | 'sleeping'>('awake');
   const fullCommand = '> generating your cityhood...';
+
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     document.title = 'Cityhood - Your GitHub Contributions as a Pixel-Art City';
@@ -78,11 +81,35 @@ export default function Home() {
               <span className="hidden sm:block">
                 <LiveBadge count={1} />
               </span>
-              <Link href="/login">
-                <Button size="sm" data-testid="button-enter-city">
-                  ENTER CITY
-                </Button>
-              </Link>
+
+              {/* Auth-aware button */}
+              {authLoading ? (
+                <Button size="sm" disabled variant="outline">...</Button>
+              ) : user ? (
+                /* Logged in: show avatar + dashboard link */
+                <Link href="/dashboard">
+                  <button
+                    className="flex items-center gap-2 border border-border bg-card hover:bg-accent transition-colors px-3 py-1.5 text-xs font-bold"
+                    data-testid="button-my-dashboard"
+                  >
+                    <img
+                      src={user.avatar_url}
+                      alt={user.username}
+                      className="w-5 h-5 border border-border"
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                    <span className="hidden sm:inline">MY DASHBOARD</span>
+                    <span className="sm:hidden">DASHBOARD</span>
+                  </button>
+                </Link>
+              ) : (
+                /* Not logged in: sign in button */
+                <Link href="/login">
+                  <Button size="sm" data-testid="button-sign-in">
+                    SIGN IN
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -129,6 +156,21 @@ export default function Home() {
                 SEARCH
               </Button>
             </motion.form>
+
+            {/* CTA: if logged in show "my building" shortcut */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.75, duration: 0.5 }}
+            >
+              {!authLoading && user && (
+                <Link href={`/user/${user.username}`}>
+                  <button className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
+                    OR VIEW YOUR OWN BUILDING →
+                  </button>
+                </Link>
+              )}
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0 }}

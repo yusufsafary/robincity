@@ -14,6 +14,7 @@ import Login from '@/pages/login';
 import UserPage from '@/pages/user';
 import Explore from '@/pages/explore';
 import Changelog from '@/pages/changelog';
+import Dashboard from '@/pages/dashboard';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/shop" component={Shop} />
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/explore" component={Explore} />
