@@ -49,7 +49,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         style={{ pointerEvents: showCity ? 'none' : 'auto' }}
       >
-        <div className="text-lg sm:text-2xl md:text-4xl font-mono text-center">
+        <div className="text-base sm:text-2xl md:text-4xl font-mono text-center">
           {terminalText}
           <span className="terminal-cursor" />
         </div>
@@ -65,14 +65,16 @@ export default function Home() {
         <CitySkyline />
 
         {/* Top control bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4 pb-2">
+        <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
           <div className="flex justify-between items-center gap-2">
             <Logo />
-            <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
-              <LiveBadge count={1} />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden sm:block">
+                <LiveBadge count={1} />
+              </span>
               <Link href="/login">
                 <Button size="sm" data-testid="button-enter-city">
-                  ENTER THE CITY
+                  ENTER CITY
                 </Button>
               </Link>
             </div>
@@ -81,17 +83,17 @@ export default function Home() {
 
         {/* Hero content */}
         <div className="relative z-10 flex items-center justify-center min-h-[100dvh] px-4">
-          <div className="w-full max-w-2xl text-center space-y-6 pt-20 pb-24">
+          <div className="w-full max-w-2xl text-center space-y-5 pt-16 pb-20 sm:pt-20 sm:pb-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
             >
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-3 tracking-wider leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-3 tracking-wider leading-tight">
                 # ROBINCITY
               </h1>
-              <p className="text-base sm:text-xl md:text-2xl text-muted-foreground">
-                A GLOBAL CITY OF GITHUB DEVELOPERS. FIND YOURSELF.
+              <p className="text-sm sm:text-xl md:text-2xl text-muted-foreground">
+                YOUR GITHUB CONTRIBUTIONS SHAPE YOUR BUILDING IN THE CITY.
               </p>
             </motion.div>
 
@@ -105,7 +107,7 @@ export default function Home() {
               <div className="relative flex-1">
                 <Input
                   type="text"
-                  placeholder="SEARCH GITHUB USERNAME..."
+                  placeholder="ENTER GITHUB USERNAME..."
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full bg-input border-border text-foreground placeholder:text-muted-foreground pl-10"
@@ -141,6 +143,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 0.8 }}
+              className="flex justify-center"
             >
               <button
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-muted px-4 py-2"

@@ -15,74 +15,56 @@ export default function About() {
 
         <div className="mt-8 space-y-12">
           <div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">ABOUT ROBINCITY</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4">ABOUT ROBINCITY</h1>
           </div>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">WHAT IS ROBINCITY?</h2>
-            <div className="text-base sm:text-lg space-y-4 text-muted-foreground leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">WHAT IS ROBINCITY?</h2>
+            <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                RobinCity is a living, breathing visualisation of the global developer community. Every programmer who has ever pushed code to GitHub has a building in this city. The more you contribute, the taller your building grows.
+                RobinCity turns your GitHub contribution history into a pixel-art building. Search any GitHub username and see their building generated in real time from their public commit data.
               </p>
               <p>
-                This is not just a profile page. It is a city where code is architecture, where contributions are measured in floors, and where every developer can see their place in the ecosystem.
+                The more you contribute, the taller your building. Different programming languages give your building different colors. More repositories mean more complex structures.
               </p>
               <p>
-                We built RobinCity because developers deserve to see their work rendered in 3D pixel-art glory. Because GitHub stats are better when they are buildings. Because the open-source community is massive, and it deserves a city.
-              </p>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">THE CITY</h2>
-            <div className="text-base sm:text-lg space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                Buildings are generated based on your contribution history using the free public GitHub API. Each commit, pull request, and issue adds to your structure. Different programming languages give your building different colours. More repositories means more floors.
-              </p>
-              <p>
-                You can search any GitHub username to preview their building. Claim your building to customise it with rooftop items from the shop. The city grows every day as more developers contribute to open source.
-              </p>
-              <p>
-                Districts form organically around popular repositories and organisations. The city is infinite. There is always room for more developers.
+                We built RobinCity because GitHub stats are more interesting when they are buildings, and the open-source community deserves a city that shows how much work goes into it every day.
               </p>
             </div>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">THE TECHNOLOGY</h2>
-            <div className="text-base sm:text-lg space-y-4 text-muted-foreground leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">THE CITY</h2>
+            <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                Buildings are generated using the free public GitHub API. Each commit, pull request, and issue adds to your structure. No login required to search or preview any building.
+              </p>
+              <p>
+                Claim your building to customize it with rooftop items from the shop. Change colors, add decorations, and make your corner of the city uniquely yours.
+              </p>
+              <p>
+                The city grows every day as more developers push code. There is always room for more buildings.
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">THE TECHNOLOGY</h2>
+            <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
                 RobinCity uses the free public GitHub API to pull contribution data and generate building geometry. No API key required. No private data accessed. Everything is based on publicly visible GitHub profiles.
               </p>
               <p>
-                The city is rendered client-side using WebGL with Three.js, displaying thousands of buildings in real-time with instanced rendering and LOD systems.
-              </p>
-              <p>
-                Your browser becomes the window into the city of code.
+                The city is rendered client-side in the browser. No account needed to explore.
               </p>
             </div>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">THE TEAM</h2>
-            <div className="text-base sm:text-lg space-y-4 text-muted-foreground leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">OPEN SOURCE</h2>
+            <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                RobinCity was built by developers, for developers. We live in terminals, push code daily, and believe that contributions should be celebrated in style.
-              </p>
-              <p>
-                Our mission is simple: make open source visible. Give every developer a place in the city. Turn GitHub profiles into architecture.
-              </p>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">OPEN SOURCE</h2>
-            <div className="text-base sm:text-lg space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                RobinCity is open source. The rendering engine, the data pipeline, the shop system are all on GitHub. We believe in building in public.
-              </p>
-              <p>
-                Contributions are welcome. Issues, pull requests, feature ideas, send them our way. Help us build the city.
+                RobinCity is open source and built in public. Contributions, issues, and pull requests are welcome.
               </p>
             </div>
             <a
