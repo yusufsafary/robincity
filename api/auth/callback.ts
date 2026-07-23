@@ -9,6 +9,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).send('Missing code');
   }
 
+  const siteUrl = (process.env.SITE_URL ?? 'https://cityhood.fun').replace(/\/$/, '');
+
   try {
     // Exchange code for GitHub access token
     const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
@@ -18,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code,
-        redirect_uri: 'https://cityhood.fun/api/auth/callback',
+        redirect_uri: `${siteUrl}/api/auth/callback`,
       }),
     });
     const tokenData = (await tokenResp.json()) as {

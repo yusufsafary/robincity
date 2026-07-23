@@ -5,7 +5,8 @@
   "framework": null,
   "env": {
     "BASE_PATH": "/",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "SITE_URL": "https://cityhood.fun"
   },
   "rewrites": [
     {
