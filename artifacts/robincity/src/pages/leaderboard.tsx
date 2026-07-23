@@ -49,7 +49,7 @@ export default function Leaderboard() {
             LEADER<span className="text-primary">BOARD</span>
           </h1>
           <p className="text-muted-foreground text-lg">
-            TOP DEVELOPERS RANKED IN ROBINCITY
+            TOP DEVELOPERS RANKED IN CITYHOOD
           </p>
         </div>
 

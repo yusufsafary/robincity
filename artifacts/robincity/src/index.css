@@ -67,7 +67,7 @@
   --radius-xl: 2px;
 }
 
-/* LIGHT MODE (RobinCity uses same palette in light/dark) */
+/* LIGHT MODE (Cityhood uses same palette in light/dark) */
 :root {
   --button-outline: rgba(204, 255, 0, 0.2);
   --badge-outline: rgba(204, 255, 0, 0.1);

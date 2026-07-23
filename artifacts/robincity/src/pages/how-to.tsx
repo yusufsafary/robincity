@@ -8,7 +8,7 @@ const steps = [
   {
     number: 1,
     title: 'SIGN IN WITH GITHUB',
-    description: 'Connect your GitHub account to RobinCity. We only access your public profile data. No private repos, no write access, just read-only stats.',
+    description: 'Connect your GitHub account to Cityhood. We only access your public profile data. No private repos, no write access, just read-only stats.',
   },
   {
     number: 2,
@@ -42,7 +42,7 @@ const levels = [
   { tier: 'JUNIOR', range: '100 - 499 CONTRIBUTIONS', color: 'hsl(120 50% 50%)', description: 'The city starts to notice you. A few extra floors.' },
   { tier: 'MID', range: '500 - 1,999 CONTRIBUTIONS', color: 'hsl(75 80% 50%)', description: 'A solid presence in the skyline. Multiple districts recognise your handle.' },
   { tier: 'SENIOR', range: '2,000 - 4,999 CONTRIBUTIONS', color: 'hsl(55 100% 55%)', description: 'Your building towers above most. Rare items unlock at this tier.' },
-  { tier: 'ARCHITECT', range: '5,000 - 9,999 CONTRIBUTIONS', color: 'hsl(30 100% 55%)', description: 'A landmark in RobinCity. Other developers fly past just to see you.' },
+  { tier: 'ARCHITECT', range: '5,000 - 9,999 CONTRIBUTIONS', color: 'hsl(30 100% 55%)', description: 'A landmark in Cityhood. Other developers fly past just to see you.' },
   { tier: 'LEGEND', range: '10,000+ CONTRIBUTIONS', color: 'hsl(0 100% 60%)', description: 'The skyscraper district. Your building is visible from every corner of the city.' },
 ];
 
@@ -53,7 +53,7 @@ const faqs = [
   },
   {
     question: 'DO YOU NEED MY API KEY?',
-    answer: 'No. RobinCity uses the free public GitHub API which requires no authentication for basic profile and repo data. We never ask for tokens or write permissions.',
+    answer: 'No. Cityhood uses the free public GitHub API which requires no authentication for basic profile and repo data. We never ask for tokens or write permissions.',
   },
   {
     question: 'CAN I HAVE MULTIPLE BUILDINGS?',
@@ -93,7 +93,7 @@ export default function HowTo() {
           <div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4">HOW TO PLAY</h1>
             <p className="text-lg text-muted-foreground">
-              YOUR GUIDE TO NAVIGATING ROBINCITY
+              YOUR GUIDE TO NAVIGATING CITYHOOD
             </p>
           </div>
 

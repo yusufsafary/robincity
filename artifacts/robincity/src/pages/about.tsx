@@ -15,20 +15,20 @@ export default function About() {
 
         <div className="mt-8 space-y-12">
           <div>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4">ABOUT ROBINCITY</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4">ABOUT CITYHOOD</h1>
           </div>
 
           <section className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-primary">WHAT IS ROBINCITY?</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">WHAT IS CITYHOOD?</h2>
             <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                RobinCity turns your GitHub contribution history into a pixel-art building. Search any GitHub username and see their building generated in real time from their public commit data.
+                Cityhood turns your GitHub contribution history into a pixel-art building. Search any GitHub username and see their building generated in real time from their public commit data.
               </p>
               <p>
                 The more you contribute, the taller your building. Different programming languages give your building different colors. More repositories mean more complex structures.
               </p>
               <p>
-                We built RobinCity because GitHub stats are more interesting when they are buildings, and the open-source community deserves a city that shows how much work goes into it every day.
+                We built Cityhood because GitHub stats are more interesting when they are buildings, and the open-source community deserves a city that shows how much work goes into it every day.
               </p>
             </div>
           </section>
@@ -52,7 +52,7 @@ export default function About() {
             <h2 className="text-xl sm:text-2xl font-bold text-primary">THE TECHNOLOGY</h2>
             <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                RobinCity uses the free public GitHub API to pull contribution data and generate building geometry. No API key required. No private data accessed. Everything is based on publicly visible GitHub profiles.
+                Cityhood uses the free public GitHub API to pull contribution data and generate building geometry. No API key required. No private data accessed. Everything is based on publicly visible GitHub profiles.
               </p>
               <p>
                 The city is rendered client-side in the browser. No account needed to explore.
@@ -64,7 +64,7 @@ export default function About() {
             <h2 className="text-xl sm:text-2xl font-bold text-primary">OPEN SOURCE</h2>
             <div className="text-sm sm:text-base space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                RobinCity is open source and built in public. Contributions, issues, and pull requests are welcome.
+                Cityhood is open source and built in public. Contributions, issues, and pull requests are welcome.
               </p>
             </div>
             <a

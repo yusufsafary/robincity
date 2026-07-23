@@ -14,7 +14,7 @@ export default function Home() {
   const [showCity, setShowCity] = useState(false);
   const [username, setUsername] = useState('');
   const [terminalText, setTerminalText] = useState('');
-  const fullCommand = '$ robin clone robincity';
+  const fullCommand = '$ robin clone cityhood';
 
   useState(() => {
     let index = 0;
@@ -90,7 +90,7 @@ export default function Home() {
               transition={{ delay: 0.3, duration: 0.8 }}
             >
               <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-3 tracking-wider leading-tight">
-                # ROBINCITY
+                # CITYHOOD
               </h1>
               <p className="text-sm sm:text-xl md:text-2xl text-muted-foreground">
                 YOUR GITHUB CONTRIBUTIONS SHAPE YOUR BUILDING IN THE CITY.

@@ -23,7 +23,7 @@ export function Logo({ className = "h-8" }: { className?: string }) {
         <rect x="14" y="10" width="2" height="2" fill="hsl(120 8% 5%)" />
       </svg>
       <span className="text-lg font-bold tracking-wider group-hover:text-accent transition-colors">
-        ROBINCITY
+        CITYHOOD
       </span>
     </Link>
   );

@@ -13,7 +13,7 @@ export default function Login() {
 
         <div className="bg-card border-2 border-border p-6 sm:p-8 space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold">SIGN IN TO ROBINCITY</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">SIGN IN TO CITYHOOD</h1>
             <p className="text-sm text-muted-foreground">
               CONNECT YOUR GITHUB ACCOUNT TO CLAIM YOUR BUILDING
             </p>
@@ -45,7 +45,7 @@ export default function Login() {
             className="block text-sm hover:text-accent transition-colors"
             data-testid="link-how-it-works"
           >
-            NEW TO ROBINCITY? LEARN HOW IT WORKS
+            NEW TO CITYHOOD? LEARN HOW IT WORKS
           </Link>
 
           <div className="flex justify-center gap-4 text-xs text-muted-foreground">

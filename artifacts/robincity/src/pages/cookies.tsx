@@ -20,10 +20,10 @@ export default function Cookies() {
             <h2 className="text-2xl font-bold text-primary">WHAT ARE COOKIES</h2>
             <div className="text-lg text-muted-foreground leading-relaxed space-y-4">
               <p>
-                Cookies are small text files stored on your device when you visit RobinCity. They help us remember your preferences, keep you logged in, and understand how you use the platform.
+                Cookies are small text files stored on your device when you visit Cityhood. They help us remember your preferences, keep you logged in, and understand how you use the platform.
               </p>
               <p>
-                We use cookies to make RobinCity work better for you. No tracking pixels, no ad networks, no data selling. Just the essentials.
+                We use cookies to make Cityhood work better for you. No tracking pixels, no ad networks, no data selling. Just the essentials.
               </p>
             </div>
           </section>
@@ -35,14 +35,14 @@ export default function Cookies() {
               <div className="border-l-2 border-primary pl-6">
                 <h3 className="text-xl font-bold mb-2">ESSENTIAL COOKIES</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Required for the site to function. Authentication tokens, session management, security features. Without these, RobinCity breaks. These cookies are necessary and cannot be disabled.
+                  Required for the site to function. Authentication tokens, session management, security features. Without these, Cityhood breaks. These cookies are necessary and cannot be disabled.
                 </p>
               </div>
 
               <div className="border-l-2 border-muted pl-6">
                 <h3 className="text-xl font-bold mb-2">ANALYTICS COOKIES</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Help us understand how users navigate the city. Which features get used, where people spend time, what breaks. Anonymous data only. No personal identification. We use this to make RobinCity better.
+                  Help us understand how users navigate the city. Which features get used, where people spend time, what breaks. Anonymous data only. No personal identification. We use this to make Cityhood better.
                 </p>
               </div>
 
@@ -77,8 +77,8 @@ export default function Cookies() {
                 Questions about cookies or data handling? Reach out via GitHub issues or Discord. We respond to privacy concerns quickly.
               </p>
               <p className="mt-4">
-                <a href="mailto:privacy@robincity.dev" className="text-primary hover:text-accent transition-colors" data-testid="link-privacy-email">
-                  privacy@robincity.dev
+                <a href="mailto:privacy@cityhood.dev" className="text-primary hover:text-accent transition-colors" data-testid="link-privacy-email">
+                  privacy@cityhood.dev
                 </a>
               </p>
             </div>

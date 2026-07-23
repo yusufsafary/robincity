@@ -184,7 +184,7 @@ export default function UserPage() {
             <div className="bg-card border border-border p-6">
               <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
                 <Building2 className="w-4 h-4" />
-                <span>YOUR BUILDING IN ROBINCITY</span>
+                <span>YOUR BUILDING IN CITYHOOD</span>
                 {topLang && <span className="text-xs border border-border px-2 py-0.5">{topLang.toUpperCase()}</span>}
               </div>
               <div className="flex items-end justify-center gap-1" style={{ height: 160 }}>

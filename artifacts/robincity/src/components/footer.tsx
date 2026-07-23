@@ -23,7 +23,7 @@ export function Footer() {
             </Link>
           </nav>
           <div className="text-xs">
-            BUILT BY @ROBINCITYDEV
+            BUILT BY @CITYHOODDEV
           </div>
         </div>
       </div>
