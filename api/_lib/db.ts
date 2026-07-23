@@ -1,12 +1,15 @@
-import { neon } from '@neondatabase/serverless';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 
-export function getDb() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Sql = NeonQueryFunction<any, any>;
+
+export function getDb(): Sql {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL not set');
-  return neon(url);
+  return neon(url) as Sql;
 }
 
-export async function ensureTables(sql: ReturnType<typeof neon>) {
+export async function ensureTables(sql: Sql) {
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
