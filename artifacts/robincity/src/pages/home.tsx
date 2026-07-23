@@ -14,7 +14,7 @@ export default function Home() {
   const [showCity, setShowCity] = useState(false);
   const [username, setUsername] = useState('');
   const [terminalText, setTerminalText] = useState('');
-  const fullCommand = '$ robin clone cityhood';
+  const fullCommand = '> generating your cityhood...';
 
   useState(() => {
     let index = 0;
