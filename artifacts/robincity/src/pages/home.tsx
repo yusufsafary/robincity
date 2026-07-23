@@ -8,6 +8,7 @@ import { CitySkyline } from '@/components/city-skyline';
 import { Logo } from '@/components/logo';
 import { LiveBadge } from '@/components/live-badge';
 import { LofiPlayer } from '@/components/lofi-player';
+import { Footer } from '@/components/footer';
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -168,6 +169,16 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
+      </motion.div>
+
+      {/* Footer – visible after scrolling past the hero */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showCity ? 1 : 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="relative z-10"
+      >
+        <Footer />
       </motion.div>
     </div>
   );
