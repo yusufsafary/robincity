@@ -8,6 +8,8 @@ import Leaderboard from '@/pages/leaderboard';
 import About from '@/pages/about';
 import HowTo from '@/pages/how-to';
 import Cookies from '@/pages/cookies';
+import Privacy from '@/pages/privacy';
+import Terms from '@/pages/terms';
 import Login from '@/pages/login';
 import UserPage from '@/pages/user';
 import NotFound from '@/pages/not-found';
@@ -23,6 +25,8 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/how-to" component={HowTo} />
       <Route path="/cookies" component={Cookies} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/terms" component={Terms} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Login} />
       <Route path="/user/:username" component={UserPage} />

@@ -2,10 +2,12 @@ import { Link } from 'wouter';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border py-8 px-4 mt-16">
+    <footer className="border-t border-border py-10 px-4 mt-16">
       <div className="container mx-auto max-w-6xl">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
+        <div className="flex flex-col gap-6">
+
+          {/* Top row: nav links */}
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
             <Link href="/about" className="hover:text-foreground transition-colors" data-testid="link-footer-about">
               ABOUT
             </Link>
@@ -18,13 +20,26 @@ export function Footer() {
             <Link href="/shop" className="hover:text-foreground transition-colors" data-testid="link-footer-shop">
               SHOP
             </Link>
-            <Link href="/cookies" className="hover:text-foreground transition-colors" data-testid="link-footer-cookies">
-              COOKIES
-            </Link>
-          </nav>
-          <div className="text-xs">
-            BUILT BY @CITYHOODDEV
           </div>
+
+          {/* Bottom row: legal links + credit */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-muted-foreground border-t border-border pt-6">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+              <Link href="/privacy" className="hover:text-foreground transition-colors" data-testid="link-footer-privacy">
+                PRIVACY POLICY
+              </Link>
+              <Link href="/terms" className="hover:text-foreground transition-colors" data-testid="link-footer-terms">
+                TERMS OF SERVICE
+              </Link>
+              <Link href="/cookies" className="hover:text-foreground transition-colors" data-testid="link-footer-cookies">
+                COOKIE POLICY
+              </Link>
+            </div>
+            <div className="shrink-0">
+              CITYHOOD &copy; {new Date().getFullYear()}
+            </div>
+          </div>
+
         </div>
       </div>
     </footer>
