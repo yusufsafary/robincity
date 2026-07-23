@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Settings } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,6 @@ export default function Home() {
   const [terminalText, setTerminalText] = useState('');
   const fullCommand = '$ robin clone robincity';
 
-  // Terminal typing animation
   useState(() => {
     let index = 0;
     const interval = setInterval(() => {
@@ -34,23 +33,23 @@ export default function Home() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
-      setLocation(`/city?user=${username.trim()}`);
+      setLocation(`/user/${username.trim()}`);
     }
   };
 
   return (
     <div className="min-h-[100dvh] w-full relative overflow-hidden bg-background">
       <LofiPlayer />
-      
+
       {/* Terminal loading screen */}
       <motion.div
-        className="absolute inset-0 bg-background z-20 flex items-center justify-center"
+        className="absolute inset-0 bg-background z-20 flex items-center justify-center px-4"
         initial={{ opacity: 1 }}
         animate={{ opacity: showCity ? 0 : 1 }}
         transition={{ duration: 0.5 }}
         style={{ pointerEvents: showCity ? 'none' : 'auto' }}
       >
-        <div className="text-2xl md:text-4xl font-mono">
+        <div className="text-lg sm:text-2xl md:text-4xl font-mono text-center">
           {terminalText}
           <span className="terminal-cursor" />
         </div>
@@ -63,51 +62,35 @@ export default function Home() {
         animate={{ opacity: showCity ? 1 : 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Animated city skyline background */}
         <CitySkyline />
 
         {/* Top control bar */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-          <Logo />
-          <div className="flex items-center gap-3">
-            <LiveBadge count={1} />
-            <Link href="/login">
-              <Button size="sm" data-testid="button-enter-city">
-                ENTER THE CITY
-              </Button>
-            </Link>
-            <a href="https://discord.gg" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-accent transition-colors" data-testid="link-discord">
-              DISCORD
-            </a>
-          </div>
-        </div>
-
-        {/* Settings strip */}
-        <div className="absolute top-16 right-4 flex flex-col gap-2 text-xs z-10">
-          <div className="bg-card border border-border px-3 py-1.5 flex items-center gap-2">
-            <span className="text-muted-foreground">EMERALD 1/4</span>
-          </div>
-          <div className="bg-card border border-border px-3 py-1.5 flex items-center gap-2">
-            <span className="text-muted-foreground">INTRO</span>
-          </div>
-          <div className="bg-card border border-border px-3 py-1.5 flex items-center gap-2">
-            <Settings className="w-3 h-3" />
-            <span>GRAPHICS HIGH</span>
+        <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4 pb-2">
+          <div className="flex justify-between items-center gap-2">
+            <Logo />
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
+              <LiveBadge count={1} />
+              <Link href="/login">
+                <Button size="sm" data-testid="button-enter-city">
+                  ENTER THE CITY
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Hero content */}
         <div className="relative z-10 flex items-center justify-center min-h-[100dvh] px-4">
-          <div className="max-w-3xl w-full text-center space-y-8">
+          <div className="w-full max-w-2xl text-center space-y-6 pt-20 pb-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-wider">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-3 tracking-wider leading-tight">
                 # ROBINCITY
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12">
+              <p className="text-base sm:text-xl md:text-2xl text-muted-foreground">
                 A GLOBAL CITY OF GITHUB DEVELOPERS. FIND YOURSELF.
               </p>
             </motion.div>
@@ -117,7 +100,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto"
+              className="flex flex-col sm:flex-row gap-3"
             >
               <div className="relative flex-1">
                 <Input
@@ -130,7 +113,7 @@ export default function Home() {
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               </div>
-              <Button type="submit" size="lg" data-testid="button-search-submit">
+              <Button type="submit" size="lg" className="w-full sm:w-auto" data-testid="button-search-submit">
                 SEARCH
               </Button>
             </motion.form>
@@ -139,7 +122,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="flex flex-wrap justify-center gap-4 text-sm"
+              className="flex flex-wrap justify-center gap-3 text-sm"
             >
               <Link href="/how-to" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-how-to-play">
                 HOW TO PLAY
@@ -154,14 +137,15 @@ export default function Home() {
               </Link>
             </motion.div>
 
-            {/* City mode toggle */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 0.8 }}
-              className="pt-8"
             >
-              <button className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-muted px-4 py-2" data-testid="button-city-mode-toggle">
+              <button
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-muted px-4 py-2"
+                data-testid="button-city-mode-toggle"
+              >
                 CITY SLEEPING
               </button>
             </motion.div>

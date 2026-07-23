@@ -9,6 +9,7 @@ import About from '@/pages/about';
 import HowTo from '@/pages/how-to';
 import Cookies from '@/pages/cookies';
 import Login from '@/pages/login';
+import UserPage from '@/pages/user';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/cookies" component={Cookies} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Login} />
+      <Route path="/user/:username" component={UserPage} />
       <Route component={NotFound} />
     </Switch>
   );
