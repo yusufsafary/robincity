@@ -114,7 +114,6 @@ const entries = [
       'Project scaffolded on Replit with pnpm workspace',
       'React + Vite + TypeScript + Tailwind CSS',
       'Vercel deployment connected to cityhood.fun',
-      'Repository made public on GitHub',
     ],
   },
 ];

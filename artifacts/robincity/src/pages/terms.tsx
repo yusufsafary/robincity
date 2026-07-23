@@ -54,7 +54,6 @@ export default function Terms() {
             <div className="text-sm sm:text-base text-muted-foreground leading-relaxed space-y-3">
               <p>The Cityhood platform, including its design, code, and visual assets, is owned by Cityhood and protected by applicable intellectual property laws. You may not copy, redistribute, or create derivative works from our platform without written permission.</p>
               <p>Your GitHub contribution data belongs to you. We use it only to generate your building visualization and do not claim ownership over it.</p>
-              <p>The Cityhood source code is available on GitHub under an open-source license. Contributions to the codebase are welcome and governed by the repository's license terms.</p>
             </div>
           </section>
 

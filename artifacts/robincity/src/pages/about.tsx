@@ -2,7 +2,6 @@ import { BackLink } from '@/components/back-link';
 import { Footer } from '@/components/footer';
 import { LofiPlayer } from '@/components/lofi-player';
 import { Button } from '@/components/ui/button';
-import { Github } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function About() {
@@ -65,26 +64,6 @@ export default function About() {
               <p>
                 The platform is built with React, TypeScript, and modern web APIs. It is optimized for both desktop and mobile browsers.
               </p>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-primary">OPEN SOURCE</h2>
-            <div className="text-sm sm:text-base space-y-3 text-muted-foreground leading-relaxed">
-              <p>
-                Cityhood is open source. The full codebase is on GitHub. Bug reports, feature requests, and pull requests are all welcome. We believe in building developer tools in public.
-              </p>
-              <a
-                href="https://github.com/yusufsafary/robincity"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="link-github-repo"
-              >
-                <Button size="lg" className="mt-2">
-                  <Github className="w-5 h-5 mr-2" />
-                  VIEW SOURCE ON GITHUB
-                </Button>
-              </a>
             </div>
           </section>
 
